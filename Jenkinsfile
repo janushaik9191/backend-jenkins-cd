@@ -9,7 +9,7 @@ pipeline {
     parameters{
         choice(name: 'ENVIRONMENT', choices: ['dev', 'qa', 'uat', 'pre-prod', 'prod'], description: 'Select your Environment')
         string(name: 'version',  description: 'Enter your application version')
-        // string(name: 'jira-id',  description: 'Enter your jira id')
+        string(name: 'jira-id',  description: 'Enter your jira id')
     }
     environment {
         appVersion = '' // this will become global, we can use across pipeline
@@ -42,20 +42,20 @@ pipeline {
                 }
             }
         }
-        // stage('Check JIRA'){
-        //     when {
-        //         expression {params.ENVIRONMENT == 'prod'}
-        //     }
-        //     steps{
-        //         script{
-        //             sh """
-        //                 echo "check jira status"
-        //                 echo "check jira deployment window"
-        //                 echo "fail pipeline if above two are not true"
-        //             """
-        //         }
-        //     }
-        // }
+        stage('Check JIRA'){
+            when {
+                expression {params.ENVIRONMENT == 'prod'}
+            }
+            steps{
+                script{
+                    sh """
+                        echo "check jira status"
+                        echo "check jira deployment window"
+                        echo "fail pipeline if above two are not true"
+                    """
+                }
+            }
+        }
         stage('Deploy'){
             steps{
                 withAWS(region: 'us-east-1', credentials: 'aws-creds') {
